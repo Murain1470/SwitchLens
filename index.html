@@ -315,6 +315,17 @@ function isCapture(label) {
          l.includes('game')||l.includes('switch')||l.includes('usb video')||l.includes('elgato');
 }
 
+function isUsbAudio(label) {
+  var l = (label||'').toLowerCase();
+  return l.includes('usb')&&!l.includes('communications');
+}
+
+function isBuiltinAudio(label) {
+  var l = (label||'').toLowerCase();
+  return l.includes('built-in')||l.includes('internal')||l.includes('array')||
+         l.includes('realtek')||l.includes('intel')||l.includes('conexant');
+}
+
 function shorten(label, idx, type) {
   if (!label) return (type==='v'?'視訊':'音訊') + ' ' + (idx+1);
   return label.length > 34 ? label.slice(0,32)+'…' : label;
@@ -341,9 +352,13 @@ async function refreshDevices() {
     var cap = allVid.find(function(d){ return isCapture(d.label); });
     curVidId = (cap || allVid[0] || {}).deviceId || null;
   }
-  if (!curAudId) {
-    var capA = allAud.find(function(d){ return isCapture(d.label); });
-    curAudId = (capA || null) ? capA.deviceId : null;
+  if (!curAudId && allAud.length > 0) {
+    // Priority: 1) labelled capture card  2) USB audio  3) non-builtin  4) first device
+    var capA  = allAud.find(function(d){ return isCapture(d.label); });
+    var usbA  = allAud.find(function(d){ return isUsbAudio(d.label) && d.deviceId!=='default'; });
+    var nonBI = allAud.find(function(d){ return !isBuiltinAudio(d.label) && d.deviceId!=='default'; });
+    var first = allAud.find(function(d){ return d.deviceId!=='default'; }) || allAud[0];
+    curAudId = (capA || usbA || nonBI || first).deviceId;
   }
 
   renderDevList(); buildSelects();
@@ -410,6 +425,12 @@ async function startCapture() {
       video: { deviceId: curVidId ? {exact:curVidId} : undefined, width:{ideal:1920}, height:{ideal:1080} },
       audio: false
     });
+    // Fallback: if still no audio ID, use first available device
+    if (!curAudId && allAud.length > 0) {
+      curAudId = allAud.find(function(d){ return d.deviceId!=='default'; })
+                 ? allAud.find(function(d){ return d.deviceId!=='default'; }).deviceId
+                 : allAud[0].deviceId;
+    }
     await openAudioStream(curAudId);
 
     srcVideo.srcObject = vidStream;
@@ -561,7 +582,11 @@ function startRec() {
   timerWrap.classList.add('on');
   timerSec = 0; updateTimer();
   timerIv = setInterval(function(){ timerSec++; updateTimer(); }, 1000);
-  showToast('⏺ 開始錄影' + (audStream ? '（含音訊）' : '（無音訊）'));
+  if (!audStream) {
+    showToast('⏺ 錄影中（⚠️ 無音訊，請從下拉選單選擇音訊設備）');
+  } else {
+    showToast('⏺ 開始錄影（含音訊）');
+  }
 }
 
 function stopRec() {
