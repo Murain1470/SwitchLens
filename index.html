@@ -421,17 +421,43 @@ async function startCapture() {
   setLog('連接中…');
   try {
     if (vidStream) vidStream.getTracks().forEach(function(t){ t.stop(); });
-    vidStream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId: curVidId ? {exact:curVidId} : undefined, width:{ideal:1920}, height:{ideal:1080} },
-      audio: false
-    });
-    // Fallback: if still no audio ID, use first available device
+    if (audEl){ audEl.srcObject = null; audEl = null; }
+
+    // Pick audio device if not yet chosen
     if (!curAudId && allAud.length > 0) {
-      curAudId = allAud.find(function(d){ return d.deviceId!=='default'; })
-                 ? allAud.find(function(d){ return d.deviceId!=='default'; }).deviceId
-                 : allAud[0].deviceId;
+      var capA  = allAud.find(function(d){ return isCapture(d.label); });
+      var usbA  = allAud.find(function(d){ return isUsbAudio(d.label) && d.deviceId!=='default'; });
+      var nonBI = allAud.find(function(d){ return !isBuiltinAudio(d.label) && d.deviceId!=='default'; });
+      var first = allAud.find(function(d){ return d.deviceId!=='default'; }) || allAud[0];
+      curAudId = (capA||usbA||nonBI||first).deviceId;
     }
-    await openAudioStream(curAudId);
+
+    var vidConstraint = { deviceId: curVidId ? {exact:curVidId} : undefined, width:{ideal:1920}, height:{ideal:1080} };
+    var audConstraint = curAudId
+      ? { deviceId:{exact:curAudId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+      : true;
+
+    // Try video + audio in one call (most reliable)
+    try {
+      vidStream = await navigator.mediaDevices.getUserMedia({ video:vidConstraint, audio:audConstraint });
+    } catch(e) {
+      // Audio device might be busy or not support exact constraint — try ideal
+      try {
+        var audFallback = curAudId
+          ? { deviceId:{ideal:curAudId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+          : true;
+        vidStream = await navigator.mediaDevices.getUserMedia({ video:vidConstraint, audio:audFallback });
+      } catch(e2) {
+        // Last resort: video only
+        vidStream = await navigator.mediaDevices.getUserMedia({ video:vidConstraint, audio:false });
+        showToast('⚠️ 音訊無法開啟，僅視訊');
+      }
+    }
+
+    // audStream = the audio portion of vidStream (for monitor / recording)
+    audStream = vidStream.getAudioTracks().length > 0
+      ? new MediaStream(vidStream.getAudioTracks())
+      : null;
 
     srcVideo.srcObject = vidStream;
     srcVideo.muted = true;
@@ -452,7 +478,9 @@ async function startCapture() {
     liveBadge.style.display = 'flex';
     buildSelects();
     setupIdle();
-    showToast('✅ 已連接：' + (vidStream.getVideoTracks()[0].label||'設備'));
+
+    var audLabel = audStream ? '含音訊' : '無音訊';
+    showToast('✅ 已連接 · ' + audLabel + ' · ' + (vidStream.getVideoTracks()[0].label||'設備'));
   } catch(e) {
     setLog('錯誤：' + e.message);
     showToast('❌ ' + e.message);
@@ -460,50 +488,58 @@ async function startCapture() {
 }
 
 async function switchVideo(id) {
-  if (!id || !vidStream) return;
+  if (!id) return;
   curVidId = id;
-  try {
-    vidStream.getTracks().forEach(function(t){ t.stop(); });
-    vidStream = await navigator.mediaDevices.getUserMedia({
-      video: {deviceId:{exact:id}, width:{ideal:1920}, height:{ideal:1080}},
-      audio: false
-    });
-    srcVideo.srcObject = vidStream; srcVideo.play();
-    showToast('🎥 已切換視訊設備');
-  } catch(e){ showToast('❌ ' + e.message); }
+  await startCapture();
 }
 
 async function switchAudio(id) {
   curAudId = id || null;
-  await openAudioStream(id);
-  showToast(id ? '🎙 音訊設備已切換' : '🔇 音訊已停用');
-  if (audOn && !id) { audOn = false; updateAudUI(); }
-}
-
-async function openAudioStream(id) {
-  if (audStream){ audStream.getTracks().forEach(function(t){ t.stop(); }); audStream = null; }
   if (audEl){ audEl.srcObject = null; audEl = null; }
-  if (!id) return;
+  if (!vidStream) return;
+
+  // Remove old audio tracks from vidStream
+  vidStream.getAudioTracks().forEach(function(t){ t.stop(); vidStream.removeTrack(t); });
+
+  if (!id) {
+    audStream = null;
+    audOn = false; updateAudUI();
+    showToast('🔇 音訊已停用');
+    return;
+  }
+
   try {
-    audStream = await navigator.mediaDevices.getUserMedia({
+    var newAud = await navigator.mediaDevices.getUserMedia({
       audio: { deviceId:{exact:id}, echoCancellation:false, noiseSuppression:false, autoGainControl:false },
       video: false
     });
+    newAud.getAudioTracks().forEach(function(t){ vidStream.addTrack(t); });
+    audStream = new MediaStream(vidStream.getAudioTracks());
     if (audOn) startAudPlayback();
-  } catch(e){ console.warn('Audio stream error:', e); audStream = null; }
+    showToast('🎙 音訊設備已切換');
+  } catch(e) {
+    showToast('❌ 音訊切換失敗：' + e.message);
+    audStream = null;
+  }
 }
 
 // ── AUDIO MONITOR ─────────────────────────────────────────────────────────
 function startAudPlayback() {
-  if (!audStream) return;
+  if (audEl){ audEl.srcObject = null; audEl = null; }
+  var tracks = vidStream ? vidStream.getAudioTracks() : [];
+  if (!tracks.length) { showToast('⚠️ 無音訊軌道'); return; }
   audEl = new Audio();
-  audEl.srcObject = new MediaStream(audStream.getAudioTracks());
+  audEl.srcObject = new MediaStream(tracks);
   audEl.muted = false;
-  audEl.play().catch(function(){});
+  audEl.play().catch(function(e){ showToast('⚠️ 音訊播放失敗：' + e.message); });
 }
 
 function toggleAudioMonitor() {
-  if (!audStream && !audOn) { showToast('請先選擇音訊設備'); return; }
+  var hasAudio = vidStream && vidStream.getAudioTracks().length > 0;
+  if (!hasAudio && !audOn) {
+    showToast('⚠️ 無音訊來源，請從下拉選單選擇音訊設備');
+    return;
+  }
   audOn = !audOn;
   if (audOn) {
     startAudPlayback();
@@ -557,14 +593,12 @@ function toggleRec(){ isRec ? stopRec() : startRec(); }
 function startRec() {
   if (!vidStream) return;
   recChunks = [];
-  var tracks = vidStream.getVideoTracks().slice();
-  if (audStream) tracks = tracks.concat(audStream.getAudioTracks());
-  var combined = new MediaStream(tracks);
+  // vidStream already contains both video + audio tracks from the single getUserMedia call
   var mime = getMime();
   try {
-    mediaRec = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: bitrate });
+    mediaRec = new MediaRecorder(vidStream, { mimeType: mime, videoBitsPerSecond: bitrate });
   } catch(e) {
-    mediaRec = new MediaRecorder(combined);
+    mediaRec = new MediaRecorder(vidStream);
   }
   mediaRec.ondataavailable = function(e){ if (e.data && e.data.size>0) recChunks.push(e.data); };
   mediaRec.onstop = function(){
