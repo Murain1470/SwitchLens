@@ -157,7 +157,7 @@ tailwind.config = {
     <span class="material-symbols-outlined text-[28px]">tune</span>
     <span class="text-[10px] uppercase tracking-widest font-bold" data-i18n="nav_settings">設定</span>
   </button>
-  <button onclick="openSourcePanel()" class="flex flex-col items-center gap-1 text-on-surface/60 hover:text-primary transition-all">
+  <button id="src-panel-trigger" onclick="openSourcePanel()" class="flex flex-col items-center gap-1 text-on-surface/60 hover:text-primary transition-all">
     <span class="material-symbols-outlined text-[28px]">swap_horiz</span>
     <span class="text-[10px] uppercase tracking-widest font-bold" data-i18n="nav_source">來源</span>
   </button>
@@ -457,6 +457,9 @@ async function handleStart() {
     s.getTracks().forEach(t=>t.stop());
     await // ── Quick Source Panel ──
 function openSourcePanel() {
+  // Toggle
+  const panel = document.getElementById('src-panel');
+  if (!panel.classList.contains('hidden')) { closeSourcePanel(); return; }
   // Sync selects with current device list
   const vSel = document.getElementById('live-vid-sel');
   const aSel = document.getElementById('live-aud-sel');
@@ -507,12 +510,13 @@ async function switchSource(type, deviceId) {
   } catch(e) { alert('切換失敗: ' + e.message); }
 }
 
-// Close panel when clicking outside
-document.addEventListener('click', e => {
+// Close panel when clicking outside (use mousedown to fire before click)
+document.addEventListener('mousedown', e => {
   const panel = document.getElementById('src-panel');
+  const trigger = document.getElementById('src-panel-trigger');
   if (!panel.classList.contains('hidden') &&
       !panel.contains(e.target) &&
-      !e.target.closest('[onclick="openSourcePanel()"]')) {
+      !trigger.contains(e.target)) {
     closeSourcePanel();
   }
 });
