@@ -13,42 +13,27 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        "primary": "#69f6b8",
-        "surface": "#0c0e11",
-        "surface-bright": "#1d2024",
-        "on-surface": "#f9f9fd",
-        "error": "#ff716c",
-        "link-blue": "#00D4FF"
+        "primary": "#69f6b8", "surface": "#0c0e11", "surface-bright": "#1d2024",
+        "on-surface": "#f9f9fd", "error": "#ff716c", "link-blue": "#00D4FF"
       },
-      fontFamily: {
-        "headline": ["Space Grotesk", "sans-serif"],
-        "body": ["Manrope", "sans-serif"]
-      }
+      fontFamily: { "headline": ["Space Grotesk","sans-serif"], "body": ["Manrope","sans-serif"] }
     }
   }
 }
 </script>
 <style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .glass-panel { background: rgba(12,14,17,0.95); backdrop-filter: blur(32px); }
+  .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
+  .glass-panel { background:rgba(12,14,17,0.95); backdrop-filter:blur(32px); }
   #canvas-container { width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000; }
   canvas { aspect-ratio:16/9; max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; cursor:crosshair; transition:transform 0.05s linear; z-index:10; }
   #src { position:absolute; width:1px; height:1px; opacity:0.01; pointer-events:none; }
-  .ui-fade { transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; opacity:1; }
+  .ui-fade { transition:opacity 0.8s ease-in-out,transform 0.8s ease-in-out; opacity:1; }
   .ui-hidden { opacity:0!important; pointer-events:none; transform:translateY(20px); }
   .ui-hidden-top { opacity:0!important; pointer-events:none; transform:translateY(-15px); }
   .card-active { border-color:#69f6b8!important; background:rgba(105,246,184,0.1)!important; color:#69f6b8!important; }
-  /* Permission block */
-  .perm-icon { animation: perm-pulse 2s ease-in-out infinite; }
-  @keyframes perm-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.08)} }
-  .perm-step { display:flex; align-items:flex-start; gap:14px; padding:16px 20px; border-radius:16px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); margin-bottom:10px; }
-  .perm-badge { min-width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
-  /* Keyboard badge */
   kbd { display:inline-block; padding:2px 8px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:6px; font-family:monospace; font-size:11px; color:#69f6b8; }
-  /* Audio mode buttons */
   .audio-mode-btn { padding:12px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:rgba(255,255,255,0.4); cursor:pointer; font-family:'Manrope',sans-serif; font-weight:600; font-size:13px; transition:all 0.2s; flex:1; text-align:center; }
   .audio-mode-btn.active { border-color:#69f6b8; background:rgba(105,246,184,0.12); color:#69f6b8; }
-  /* Lang buttons */
   .lang-btn { padding:4px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.12); background:transparent; color:rgba(255,255,255,0.35); cursor:pointer; font-size:11px; font-weight:700; font-family:'Manrope',sans-serif; transition:all 0.2s; letter-spacing:0.05em; }
   .lang-btn.active { border-color:#69f6b8; color:#69f6b8; background:rgba(105,246,184,0.08); }
   .no-scrollbar::-webkit-scrollbar { display:none; }
@@ -59,7 +44,7 @@ tailwind.config = {
 
 <div id="flash" class="fixed inset-0 bg-white opacity-0 pointer-events-none z-[300]"></div>
 
-<!-- ── Header ── -->
+<!-- Header -->
 <header id="ui-header" class="ui-fade fixed top-0 w-full z-[120] flex justify-between items-center px-10 h-16 bg-black/40 backdrop-blur-md border-b border-white/5">
   <div class="text-xl font-bold text-link-blue tracking-widest font-headline uppercase">SwitchLens Pro</div>
   <div class="flex items-center gap-5">
@@ -69,7 +54,6 @@ tailwind.config = {
       <span><kbd>M</kbd> <span data-i18n="shortcut_mute">靜音</span></span>
       <span><kbd>F</kbd> <span data-i18n="shortcut_fs">全螢幕</span></span>
     </div>
-    <!-- Language switcher -->
     <div class="flex items-center gap-1">
       <button class="lang-btn active" onclick="setLang('zh')">中文</button>
       <button class="lang-btn" onclick="setLang('en')">EN</button>
@@ -79,30 +63,23 @@ tailwind.config = {
   </div>
 </header>
 
-<!-- ── Setup Layer ── -->
+<!-- Setup Layer -->
 <div id="setup-layer" class="fixed inset-0 z-[200] flex items-center justify-center p-6 transition-all duration-500">
   <div class="fixed inset-0 bg-surface/98 backdrop-blur-3xl"></div>
   <div class="relative w-full max-w-lg bg-surface-bright/60 rounded-[32px] p-10 shadow-2xl border border-white/5">
-
-    <!-- Title + lang switcher -->
     <div class="text-center mb-7">
       <h1 class="font-headline font-bold text-4xl text-link-blue mb-1 uppercase tracking-tight">SwitchLens</h1>
       <p class="text-on-surface/20 uppercase tracking-[0.4em] text-[10px] font-bold mb-4" data-i18n="subtitle">Elite Capture System</p>
-      <!-- Language switcher on setup page -->
       <div class="flex items-center justify-center gap-2">
         <button class="lang-btn active" onclick="setLang('zh')">中文</button>
         <button class="lang-btn" onclick="setLang('en')">EN</button>
         <button class="lang-btn" onclick="setLang('ja')">日本語</button>
       </div>
     </div>
-
-    <!-- Permission notice — compact single line -->
     <div class="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl border border-primary/20 bg-primary/5">
       <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-size:18px">info</span>
-      <span class="text-on-surface/50 text-xs leading-relaxed" data-i18n="perm_hint">點擊下方按鈕後，請在瀏覽器彈窗中允許<strong class="text-on-surface/80">攝影機</strong>與<strong class="text-on-surface/80">麥克風</strong>的存取權限。</span>
+      <span class="text-on-surface/50 text-xs leading-relaxed" data-i18n="perm_hint">點擊下方按鈕後，請在瀏覽器彈窗中允許攝影機與麥克風的存取權限。</span>
     </div>
-
-    <!-- Device selects -->
     <div class="grid grid-cols-2 gap-4 mb-6">
       <div class="space-y-1.5">
         <label class="block text-primary text-[10px] font-bold uppercase tracking-widest ml-1 opacity-60" data-i18n="label_video">影像來源</label>
@@ -113,8 +90,7 @@ tailwind.config = {
         <select id="aud-sel" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:border-primary text-on-surface cursor-pointer outline-none appearance-none text-sm"></select>
       </div>
     </div>
-
-    <button id="main-start-btn" onclick="handleStart()" class="w-full bg-primary text-black font-headline font-bold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/20">
+    <button onclick="handleStart()" class="w-full bg-primary text-black font-headline font-bold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/20">
       <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
       <span data-i18n="btn_start">授權並開始擷取</span>
     </button>
@@ -122,16 +98,14 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ── Main View ── -->
+<!-- Main View -->
 <main id="vw" class="relative z-0 h-screen w-screen bg-[#050505] flex items-center justify-center overflow-hidden">
   <video id="src" autoplay playsinline muted></video>
   <div id="canvas-container"><canvas id="glCanvas"></canvas></div>
-
   <div id="rec-status" class="hidden absolute top-24 left-1/2 -translate-x-1/2 z-50 flex items-center bg-error/20 backdrop-blur-md border border-error/30 px-6 py-2 rounded-full ui-fade">
     <span class="w-2 h-2 bg-error rounded-full mr-3 animate-pulse shadow-[0_0_8px_#ff716c]"></span>
     <span id="timer-text" class="font-headline font-bold text-error tracking-widest text-sm uppercase">REC 00:00:00</span>
   </div>
-
   <div id="telemetry" class="ui-fade absolute bottom-32 left-10 z-30 opacity-40 font-headline pointer-events-none hidden">
     <div id="res-badge" class="text-white text-lg font-bold">---</div>
     <div id="fps-badge" class="text-primary text-xs font-bold uppercase tracking-widest">-- FPS</div>
@@ -139,7 +113,7 @@ tailwind.config = {
   </div>
 </main>
 
-<!-- ── Bottom Nav ── -->
+<!-- Bottom Nav -->
 <nav id="ui-bottom" class="ui-fade hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-10 bg-[#1d2024]/70 backdrop-blur-xl rounded-full px-12 py-4 border border-white/10 shadow-2xl">
   <button onclick="takePhoto()" class="flex flex-col items-center gap-1 text-on-surface/60 hover:text-primary transition-all group" title="S">
     <span class="material-symbols-outlined text-[28px] group-hover:scale-110">photo_camera</span>
@@ -157,35 +131,12 @@ tailwind.config = {
     <span class="material-symbols-outlined text-[28px]">tune</span>
     <span class="text-[10px] uppercase tracking-widest font-bold" data-i18n="nav_settings">設定</span>
   </button>
-
 </nav>
 
-    <!-- Video source -->
-    <div class="px-5 py-4 border-b border-white/5">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="material-symbols-outlined text-link-blue" style="font-size:16px">videocam</span>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-link-blue opacity-70" data-i18n="label_video">影像來源</span>
-      </div>
-      <select id="live-vid-sel" onchange="switchSource('video', this.value)"
-        class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface text-sm cursor-pointer outline-none appearance-none focus:border-link-blue transition-colors">
-      </select>
-    </div>
-    <!-- Audio source -->
-    <div class="px-5 py-4">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="material-symbols-outlined text-primary" style="font-size:16px">mic</span>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-primary opacity-70" data-i18n="label_audio">音訊來源</span>
-      </div>
-      <select id="live-aud-sel" onchange="switchSource('audio', this.value)"
-        class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-on-surface text-sm cursor-pointer outline-none appearance-none focus:border-primary transition-colors">
-      </select>
-    </div>
-  </div>
-</div>
-
-<!-- ── Advanced Modal ── -->
+<!-- Advanced Modal -->
 <div id="adv-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-6 bg-surface/60 backdrop-blur-md">
   <div class="w-full max-w-5xl glass-panel rounded-[40px] shadow-2xl flex flex-col max-h-[85vh] border border-white/10 overflow-hidden">
+
     <div class="p-10 pb-4 flex justify-between items-start">
       <div>
         <h2 class="font-headline text-3xl font-bold text-on-surface" data-i18n="adv_title">進階設定</h2>
@@ -197,18 +148,21 @@ tailwind.config = {
     </div>
 
     <div class="flex-1 overflow-y-auto p-10 grid grid-cols-1 md:grid-cols-2 gap-16 no-scrollbar">
+
       <!-- Left col -->
       <div class="space-y-12">
-        <!-- Source switching -->
+
+        <!-- ★ Source switching ★ -->
         <section>
           <h3 class="text-primary font-headline font-bold mb-6 flex items-center gap-3 uppercase tracking-widest">
-            <span class="material-symbols-outlined">swap_horiz</span><span data-i18n="sec_source">切換來源</span>
+            <span class="material-symbols-outlined">swap_horiz</span>
+            <span data-i18n="sec_source">切換來源</span>
           </h3>
           <div class="space-y-4">
             <div class="space-y-2">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-link-blue" style="font-size:16px">videocam</span>
-                <label class="text-[10px] font-bold uppercase tracking-widest text-link-blue opacity-70" data-i18n="label_video">影像來源</label>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-link-blue opacity-70" data-i18n="label_video">影像來源</span>
               </div>
               <select id="live-vid-sel" onchange="switchSource('video', this.value)"
                 class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-on-surface text-sm cursor-pointer outline-none appearance-none focus:border-link-blue transition-colors">
@@ -217,7 +171,7 @@ tailwind.config = {
             <div class="space-y-2">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary" style="font-size:16px">mic</span>
-                <label class="text-[10px] font-bold uppercase tracking-widest text-primary opacity-70" data-i18n="label_audio">音訊來源</label>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-primary opacity-70" data-i18n="label_audio">音訊來源</span>
               </div>
               <select id="live-aud-sel" onchange="switchSource('audio', this.value)"
                 class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-on-surface text-sm cursor-pointer outline-none appearance-none focus:border-primary transition-colors">
@@ -226,9 +180,11 @@ tailwind.config = {
           </div>
         </section>
 
+        <!-- Format -->
         <section>
           <h3 class="text-primary font-headline font-bold mb-6 flex items-center gap-3 uppercase tracking-widest">
-            <span class="material-symbols-outlined">memory</span><span data-i18n="sec_format">錄製格式</span>
+            <span class="material-symbols-outlined">memory</span>
+            <span data-i18n="sec_format">錄製格式</span>
           </h3>
           <div class="grid grid-cols-2 gap-3">
             <div id="fmt-webm" class="p-4 bg-surface-bright border rounded-2xl text-center font-bold cursor-pointer transition-all card-active" onclick="setFormat('webm')">
@@ -241,10 +197,12 @@ tailwind.config = {
           </div>
         </section>
 
+        <!-- Bitrate -->
         <section>
           <div class="flex justify-between items-end mb-6">
             <h3 class="text-primary font-headline font-bold flex items-center gap-3 uppercase tracking-widest">
-              <span class="material-symbols-outlined">speed</span><span data-i18n="sec_bitrate">視訊位元率</span>
+              <span class="material-symbols-outlined">speed</span>
+              <span data-i18n="sec_bitrate">視訊位元率</span>
             </h3>
             <span id="br-display" class="font-headline text-primary font-bold text-2xl tracking-tighter">16.0 <span class="text-xs font-normal uppercase">Mbps</span></span>
           </div>
@@ -252,9 +210,11 @@ tailwind.config = {
           <div class="flex justify-between text-[10px] text-on-surface/30 mt-2"><span>2 Mbps</span><span>16 Mbps</span><span>50 Mbps</span></div>
         </section>
 
+        <!-- Shortcuts -->
         <section>
           <h3 class="text-primary font-headline font-bold mb-4 flex items-center gap-3 uppercase tracking-widest">
-            <span class="material-symbols-outlined">keyboard</span><span data-i18n="sec_shortcuts">快捷鍵</span>
+            <span class="material-symbols-outlined">keyboard</span>
+            <span data-i18n="sec_shortcuts">快捷鍵</span>
           </h3>
           <div class="text-sm space-y-0">
             <div class="flex justify-between items-center py-2 border-b border-white/5">
@@ -271,13 +231,17 @@ tailwind.config = {
             </div>
           </div>
         </section>
-      </div>
+
+      </div><!-- /left col -->
 
       <!-- Right col -->
       <div class="space-y-12">
+
+        <!-- Audio monitor mode -->
         <section>
           <h3 class="text-primary font-headline font-bold mb-6 flex items-center gap-3 uppercase tracking-widest">
-            <span class="material-symbols-outlined">surround_sound</span><span data-i18n="sec_audio_mode">監聽模式</span>
+            <span class="material-symbols-outlined">surround_sound</span>
+            <span data-i18n="sec_audio_mode">監聽模式</span>
           </h3>
           <div class="flex gap-3">
             <button id="mode-hifi" class="audio-mode-btn active" onclick="setAudioMode('hifi')">
@@ -289,6 +253,7 @@ tailwind.config = {
           </div>
         </section>
 
+        <!-- Overlay toggle -->
         <section>
           <div class="flex items-center justify-between p-6 bg-surface-bright rounded-2xl border border-white/5">
             <div>
@@ -302,28 +267,38 @@ tailwind.config = {
           </div>
         </section>
 
+        <!-- Zoom -->
         <section>
           <h3 class="text-primary font-headline font-bold mb-4 flex items-center gap-3 uppercase tracking-widest">
-            <span class="material-symbols-outlined">zoom_in</span><span data-i18n="sec_zoom">縮放控制</span>
+            <span class="material-symbols-outlined">zoom_in</span>
+            <span data-i18n="sec_zoom">縮放控制</span>
           </h3>
           <div class="text-sm text-on-surface/50 space-y-0">
             <div class="flex items-center gap-3 py-2 border-b border-white/5">
-              <span class="material-symbols-outlined text-base">mouse</span><span data-i18n="zoom_wheel">滾輪縮放（最大 8x）</span>
+              <span class="material-symbols-outlined text-base">mouse</span>
+              <span data-i18n="zoom_wheel">滾輪縮放（最大 8x）</span>
             </div>
             <div class="flex items-center gap-3 py-2 border-b border-white/5">
-              <span class="material-symbols-outlined text-base">drag_pan</span><span data-i18n="zoom_drag">拖曳平移畫面</span>
+              <span class="material-symbols-outlined text-base">drag_pan</span>
+              <span data-i18n="zoom_drag">拖曳平移畫面</span>
             </div>
             <div class="flex items-center gap-3 py-2">
-              <span class="material-symbols-outlined text-base">touch_app</span><span data-i18n="zoom_dbl">雙擊重設至原始比例</span>
+              <span class="material-symbols-outlined text-base">touch_app</span>
+              <span data-i18n="zoom_dbl">雙擊重設至原始比例</span>
             </div>
           </div>
         </section>
-      </div>
-    </div>
+
+      </div><!-- /right col -->
+
+    </div><!-- /grid -->
 
     <div class="p-10 flex justify-end bg-black/20 border-t border-white/5">
-      <button onclick="closeAdvanced()" class="bg-primary text-black font-headline font-bold py-4 px-12 rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all" data-i18n="btn_apply">儲存並套用</button>
+      <button onclick="closeAdvanced()" class="bg-primary text-black font-headline font-bold py-4 px-12 rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all" data-i18n="btn_apply">
+        儲存並套用
+      </button>
     </div>
+
   </div>
 </div>
 
@@ -332,9 +307,7 @@ tailwind.config = {
 <script>
 'use strict';
 
-// ════════════════════════════════
-// i18n
-// ════════════════════════════════
+// ── i18n ──
 const LANGS = {
   zh: {
     subtitle:'Elite Capture System',
@@ -345,8 +318,9 @@ const LANGS = {
     status_authorizing:'正在請求授權...',
     status_success:'授權成功，啟動中...',
     status_fail:'❌ 授權失敗，請重新允許相機與麥克風',
-    nav_shot:'截圖', nav_rec:'錄影', nav_audio:'音訊', nav_settings:'設定', sec_source:'切換來源',
+    nav_shot:'截圖', nav_rec:'錄影', nav_audio:'音訊', nav_settings:'設定',
     adv_title:'進階設定',
+    sec_source:'切換來源',
     sec_format:'錄製格式', fmt_mp4_sub:'H.264 相容',
     sec_bitrate:'視訊位元率',
     sec_shortcuts:'快捷鍵',
@@ -367,8 +341,9 @@ const LANGS = {
     status_authorizing:'Requesting permissions...',
     status_success:'Authorized. Starting...',
     status_fail:'❌ Permission denied. Please allow camera & microphone access.',
-    nav_shot:'Photo', nav_rec:'Record', nav_audio:'Audio', nav_settings:'Settings', sec_source:'Switch Source',
+    nav_shot:'Photo', nav_rec:'Record', nav_audio:'Audio', nav_settings:'Settings',
     adv_title:'Advanced Settings',
+    sec_source:'Switch Source',
     sec_format:'Recording Format', fmt_mp4_sub:'H.264 Compatible',
     sec_bitrate:'Video Bitrate',
     sec_shortcuts:'Keyboard Shortcuts',
@@ -389,8 +364,9 @@ const LANGS = {
     status_authorizing:'権限をリクエスト中...',
     status_success:'許可されました。起動中...',
     status_fail:'❌ 権限が拒否されました。カメラとマイクのアクセスを許可してください。',
-    nav_shot:'スクショ', nav_rec:'録画', nav_audio:'音声', nav_settings:'設定', sec_source:'ソース切替',
+    nav_shot:'スクショ', nav_rec:'録画', nav_audio:'音声', nav_settings:'設定',
     adv_title:'詳細設定',
+    sec_source:'ソース切替',
     sec_format:'録画フォーマット', fmt_mp4_sub:'H.264 互換',
     sec_bitrate:'映像ビットレート',
     sec_shortcuts:'キーボードショートカット',
@@ -409,13 +385,9 @@ let currentLang = 'zh';
 function setLang(lang) {
   currentLang = lang;
   const dict = LANGS[lang];
-  const HTML_KEYS = new Set(['perm_hint']);
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (dict[key] !== undefined) {
-      if (HTML_KEYS.has(key)) el.innerHTML = dict[key];
-      else el.textContent = dict[key];
-    }
+    if (dict[key] !== undefined) el.textContent = dict[key];
   });
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active',
@@ -427,14 +399,11 @@ function setLang(lang) {
   document.documentElement.lang = lang==='zh'?'zh-TW': lang==='ja'?'ja':'en';
 }
 
-// ════════════════════════════════
-// App state
-// ════════════════════════════════
+// ── State ──
 var vidStream, audStream, mediaRec, recChunks=[], isRec=false;
 var audOn=false, audEl=null, bitrate=16000000, idleTimer, gl, glTex, rafId;
 var zoomScale=1, panX=0, panY=0, isPanning=false, panStartX, panStartY, panOriginX, panOriginY;
 var recFormat='webm', audioMode='hifi';
-
 const $ = id => document.getElementById(id);
 
 // ── Devices ──
@@ -463,62 +432,11 @@ async function handleStart() {
   const chosenAud = $('aud-sel').value;
   $('ph-log').textContent = dict.status_authorizing;
   $('ph-log').style.color = '';
-  $('ph-log').style.opacity = '0.7';
   try {
     audEl = new Audio();
     const s = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
     s.getTracks().forEach(t=>t.stop());
-    await 
-
-
-
-
-// ── Switch source live ──
-async function switchSource(type, deviceId) {
-  try {
-    if (type === 'video') {
-      const newVid = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: deviceId ? {exact:deviceId} : undefined, width:{ideal:1920}, height:{ideal:1080}, frameRate:{ideal:60} }
-      });
-      if (vidStream) vidStream.getVideoTracks().forEach(t => t.stop());
-      vidStream = newVid;
-      $('src').srcObject = vidStream;
-      $('vid-sel').value = deviceId;
-    } else {
-      if (!deviceId) {
-        if (audStream) { audStream.getTracks().forEach(t => t.stop()); audStream = null; }
-        if (audEl) { audEl.srcObject = null; audOn = false; updateAudUI(); }
-        return;
-      }
-      const newAud = await navigator.mediaDevices.getUserMedia({
-        audio: { deviceId:{exact:deviceId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false }
-      });
-      if (audStream) audStream.getTracks().forEach(t => t.stop());
-      audStream = newAud;
-      if (audEl && audOn) { audEl.srcObject = audStream; audEl.play().catch(()=>{}); }
-      $('aud-sel').value = deviceId;
-    }
-  } catch(e) { alert('切換失敗: ' + e.message); }
-}
-
-// Sync live selects when opening advanced modal
-const _origOpenAdv = openAdvanced;
-function openAdvanced() {
-  _origOpenAdv();
-  const vSel = $('live-vid-sel'), aSel = $('live-aud-sel');
-  vSel.innerHTML = $('vid-sel').innerHTML;
-  aSel.innerHTML = $('aud-sel').innerHTML;
-  if (vidStream) {
-    const cur = vidStream.getVideoTracks()[0].getSettings().deviceId;
-    if (cur) vSel.value = cur;
-  }
-  if (audStream) {
-    const cur = audStream.getAudioTracks()[0].getSettings().deviceId;
-    if (cur) aSel.value = cur;
-  }
-}
-
-refreshDevices();
+    await refreshDevices();
     if (chosenVid) $('vid-sel').value = chosenVid;
     if (chosenAud) $('aud-sel').value = chosenAud;
     $('ph-log').textContent = dict.status_success;
@@ -534,11 +452,11 @@ async function startCapture(vidId, audId) {
   try {
     if(vidStream) vidStream.getTracks().forEach(t=>t.stop());
     vidStream = await navigator.mediaDevices.getUserMedia({
-      video: {deviceId:vidId?{exact:vidId}:undefined, width:{ideal:1920}, height:{ideal:1080}, frameRate:{ideal:60}}
+      video:{deviceId:vidId?{exact:vidId}:undefined, width:{ideal:1920}, height:{ideal:1080}, frameRate:{ideal:60}}
     });
     if(audId) {
       audStream = await navigator.mediaDevices.getUserMedia({
-        audio: {deviceId:{exact:audId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false,
+        audio:{deviceId:{exact:audId}, echoCancellation:false, noiseSuppression:false, autoGainControl:false,
           latency: audioMode==='low' ? 0 : undefined}
       });
     }
@@ -554,19 +472,19 @@ async function startCapture(vidId, audId) {
   } catch(e){ alert('Failed: '+e.message); }
 }
 
-// ── WebGL (low-latency) ──
+// ── WebGL ──
 function initGL() {
-  const canvas = $('glCanvas');
-  gl = canvas.getContext('webgl', {preserveDrawingBuffer:true, alpha:false, desynchronized:true, powerPreference:'high-performance'});
-  const vs = 'attribute vec2 p;attribute vec2 u;varying vec2 v;void main(){gl_Position=vec4(p,0,1);v=u;}';
-  const fs = 'precision mediump float;uniform sampler2D t;varying vec2 v;void main(){gl_FragColor=texture2D(t,v);}';
-  const mk = (t,s) => { const h=gl.createShader(t); gl.shaderSource(h,s); gl.compileShader(h); return h; };
-  const pr = gl.createProgram();
+  const canvas=$('glCanvas');
+  gl=canvas.getContext('webgl',{preserveDrawingBuffer:true,alpha:false,desynchronized:true,powerPreference:'high-performance'});
+  const vs='attribute vec2 p;attribute vec2 u;varying vec2 v;void main(){gl_Position=vec4(p,0,1);v=u;}';
+  const fs='precision mediump float;uniform sampler2D t;varying vec2 v;void main(){gl_FragColor=texture2D(t,v);}';
+  const mk=(t,s)=>{const h=gl.createShader(t);gl.shaderSource(h,s);gl.compileShader(h);return h;};
+  const pr=gl.createProgram();
   gl.attachShader(pr,mk(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,mk(gl.FRAGMENT_SHADER,fs));
   gl.linkProgram(pr); gl.useProgram(pr);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,1,1,-1,1,1,-1,1,0,0,1,1,1,0]), gl.STATIC_DRAW);
-  const aP=gl.getAttribLocation(pr,'p'), aU=gl.getAttribLocation(pr,'u');
+  gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,0,1,1,-1,1,1,-1,1,0,0,1,1,1,0]),gl.STATIC_DRAW);
+  const aP=gl.getAttribLocation(pr,'p'),aU=gl.getAttribLocation(pr,'u');
   gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP,2,gl.FLOAT,false,16,0);
   gl.enableVertexAttribArray(aU); gl.vertexAttribPointer(aU,2,gl.FLOAT,false,16,8);
   glTex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,glTex);
@@ -576,10 +494,10 @@ function initGL() {
 }
 
 function renderLoop() {
-  rafId = requestAnimationFrame(renderLoop);
-  if(!gl || $('src').readyState<2) return;
-  const dpr=window.devicePixelRatio||1, canvas=$('glCanvas');
-  if(canvas.width!==canvas.clientWidth*dpr){ canvas.width=canvas.clientWidth*dpr; canvas.height=canvas.clientHeight*dpr; }
+  rafId=requestAnimationFrame(renderLoop);
+  if(!gl||$('src').readyState<2) return;
+  const dpr=window.devicePixelRatio||1,canvas=$('glCanvas');
+  if(canvas.width!==canvas.clientWidth*dpr){canvas.width=canvas.clientWidth*dpr;canvas.height=canvas.clientHeight*dpr;}
   gl.viewport(0,0,canvas.width,canvas.height);
   gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,$('src'));
   gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
@@ -610,16 +528,16 @@ function setFormat(fmt){
   $('fmt-mp4').classList.toggle('card-active',fmt==='mp4');   $('fmt-mp4').classList.toggle('opacity-50',fmt!=='mp4');
 }
 function getBestMimeType(){
-  const c = recFormat==='mp4'
-    ? ['video/mp4;codecs=h264,aac','video/mp4','video/webm;codecs=vp9,opus','video/webm']
-    : ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+  const c=recFormat==='mp4'
+    ?['video/mp4;codecs=h264,aac','video/mp4','video/webm;codecs=vp9,opus','video/webm']
+    :['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
   return c.find(m=>MediaRecorder.isTypeSupported(m))||'';
 }
 function toggleRec(){
   if(!isRec){
     recChunks=[];
     const tracks=[...vidStream.getTracks(),...(audStream?audStream.getTracks():[])];
-    const mimeType=getBestMimeType(), opts={videoBitsPerSecond:bitrate};
+    const mimeType=getBestMimeType(),opts={videoBitsPerSecond:bitrate};
     if(mimeType) opts.mimeType=mimeType;
     mediaRec=new MediaRecorder(new MediaStream(tracks),opts);
     mediaRec.ondataavailable=e=>recChunks.push(e.data);
@@ -641,6 +559,58 @@ function toggleRec(){
   }
 }
 
+// ── Switch source live ──
+async function switchSource(type, deviceId) {
+  try {
+    if (type==='video') {
+      const newVid=await navigator.mediaDevices.getUserMedia({
+        video:{deviceId:deviceId?{exact:deviceId}:undefined,width:{ideal:1920},height:{ideal:1080},frameRate:{ideal:60}}
+      });
+      if(vidStream) vidStream.getVideoTracks().forEach(t=>t.stop());
+      vidStream=newVid; $('src').srcObject=vidStream;
+      $('vid-sel').value=deviceId;
+    } else {
+      if(!deviceId){
+        if(audStream){audStream.getTracks().forEach(t=>t.stop());audStream=null;}
+        if(audEl){audEl.srcObject=null;audOn=false;updateAudUI();}
+        return;
+      }
+      const newAud=await navigator.mediaDevices.getUserMedia({
+        audio:{deviceId:{exact:deviceId},echoCancellation:false,noiseSuppression:false,autoGainControl:false}
+      });
+      if(audStream) audStream.getTracks().forEach(t=>t.stop());
+      audStream=newAud;
+      if(audEl&&audOn){audEl.srcObject=audStream;audEl.play().catch(()=>{});}
+      $('aud-sel').value=deviceId;
+    }
+  } catch(e){ alert('切換失敗: '+e.message); }
+}
+
+// ── Advanced modal ──
+function openAdvanced() {
+  $('adv-modal').classList.remove('hidden');
+  // Populate live selects
+  const vSel=$('live-vid-sel'), aSel=$('live-aud-sel');
+  vSel.innerHTML=$('vid-sel').innerHTML;
+  aSel.innerHTML=$('aud-sel').innerHTML;
+  if(vidStream){
+    const cur=vidStream.getVideoTracks()[0].getSettings().deviceId;
+    if(cur) vSel.value=cur;
+  }
+  if(audStream){
+    const tracks=audStream.getAudioTracks();
+    if(tracks.length){ const cur=tracks[0].getSettings().deviceId; if(cur) aSel.value=cur; }
+  }
+}
+function closeAdvanced(){ $('adv-modal').classList.add('hidden'); }
+function syncOverlay(el){ $('telemetry').classList.toggle('hidden',!el.checked); }
+function toggleFS(){ document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); }
+
+$('br-slider').oninput=function(){
+  bitrate=+this.value;
+  $('br-display').innerHTML=(+this.value/1e6).toFixed(1)+' <span class="text-xs font-normal uppercase">Mbps</span>';
+};
+
 // ── Idle UI ──
 function initIdle(){
   const show=()=>{
@@ -659,7 +629,7 @@ function initIdle(){
 }
 
 // ── Keyboard shortcuts ──
-document.addEventListener('keydown', e=>{
+document.addEventListener('keydown',e=>{
   if(['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)) return;
   switch(e.code){
     case 'Space': e.preventDefault(); if(vidStream) toggleRec(); break;
@@ -668,17 +638,6 @@ document.addEventListener('keydown', e=>{
     case 'KeyF':  toggleFS(); break;
   }
 });
-
-// ── Misc ──
-function openAdvanced(){ $('adv-modal').classList.remove('hidden'); }
-function closeAdvanced(){ $('adv-modal').classList.add('hidden'); }
-function syncOverlay(el){ $('telemetry').classList.toggle('hidden',!el.checked); }
-function toggleFS(){ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
-
-$('br-slider').oninput = function(){
-  bitrate=+this.value;
-  $('br-display').innerHTML=(+this.value/1e6).toFixed(1)+' <span class="text-xs font-normal uppercase">Mbps</span>';
-};
 
 // ── Zoom & Pan ──
 function applyTrans(){ $('glCanvas').style.transform=`scale(${zoomScale}) translate(${panX/zoomScale}px,${panY/zoomScale}px)`; }
