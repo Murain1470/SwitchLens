@@ -82,57 +82,43 @@ tailwind.config = {
 <!-- ── Setup Layer ── -->
 <div id="setup-layer" class="fixed inset-0 z-[200] flex items-center justify-center p-6 transition-all duration-500">
   <div class="fixed inset-0 bg-surface/98 backdrop-blur-3xl"></div>
-  <div class="relative w-full max-w-2xl bg-surface-bright/60 rounded-[40px] p-12 md:p-16 shadow-2xl border border-white/5">
+  <div class="relative w-full max-w-lg bg-surface-bright/60 rounded-[32px] p-10 shadow-2xl border border-white/5">
 
-    <div class="text-center mb-10">
-      <h1 class="font-headline font-bold text-4xl text-link-blue mb-2 uppercase tracking-tight">SwitchLens</h1>
-      <p class="text-on-surface/20 uppercase tracking-[0.4em] text-[10px] font-bold" data-i18n="subtitle">Elite Capture System</p>
+    <!-- Title + lang switcher -->
+    <div class="text-center mb-7">
+      <h1 class="font-headline font-bold text-4xl text-link-blue mb-1 uppercase tracking-tight">SwitchLens</h1>
+      <p class="text-on-surface/20 uppercase tracking-[0.4em] text-[10px] font-bold mb-4" data-i18n="subtitle">Elite Capture System</p>
+      <!-- Language switcher on setup page -->
+      <div class="flex items-center justify-center gap-2">
+        <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+      </div>
     </div>
 
-    <!-- ★ Permission notice ★ -->
-    <div class="mb-8 p-5 rounded-2xl border border-primary/20 bg-primary/5">
-      <div class="flex items-center gap-3 mb-4">
-        <span class="material-symbols-outlined text-primary perm-icon" style="font-size:22px">info</span>
-        <span class="text-primary font-bold text-sm uppercase tracking-widest" data-i18n="perm_title">開始前請確認瀏覽器權限</span>
-      </div>
-      <div class="perm-step">
-        <div class="perm-badge" style="background:rgba(0,212,255,0.12)">
-          <span class="material-symbols-outlined text-link-blue" style="font-size:20px">videocam</span>
-        </div>
-        <div>
-          <div class="font-bold text-on-surface text-sm mb-1" data-i18n="perm_cam_title">📷 攝影機（Camera）權限</div>
-          <div class="text-on-surface/40 text-xs leading-relaxed" data-i18n="perm_cam_desc">瀏覽器會跳出授權視窗，請選擇「允許」。若使用擷取卡，請在下方選單選擇對應的影像裝置。</div>
-        </div>
-      </div>
-      <div class="perm-step">
-        <div class="perm-badge" style="background:rgba(105,246,184,0.12)">
-          <span class="material-symbols-outlined text-primary" style="font-size:20px">mic</span>
-        </div>
-        <div>
-          <div class="font-bold text-on-surface text-sm mb-1" data-i18n="perm_mic_title">🎙️ 麥克風（Microphone）權限</div>
-          <div class="text-on-surface/40 text-xs leading-relaxed" data-i18n="perm_mic_desc">同樣需要授權，才能擷取 Switch 的遊戲聲音。請選擇對應的音訊輸入裝置（通常是 HDMI / USB 擷取卡）。</div>
-        </div>
-      </div>
-      <div class="mt-3 px-1 text-[10px] text-on-surface/25 leading-relaxed" data-i18n="perm_note">⚠️ 若看不到裝置清單或清單是空的，請先插好擷取卡再重新整理頁面。所有媒體資料僅在本機處理，不會上傳至任何伺服器。</div>
+    <!-- Permission notice — compact single line -->
+    <div class="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl border border-primary/20 bg-primary/5">
+      <span class="material-symbols-outlined text-primary flex-shrink-0" style="font-size:18px">info</span>
+      <span class="text-on-surface/50 text-xs leading-relaxed" data-i18n="perm_hint">點擊下方按鈕後，請在瀏覽器彈窗中允許<strong class="text-on-surface/80">攝影機</strong>與<strong class="text-on-surface/80">麥克風</strong>的存取權限。</span>
     </div>
 
     <!-- Device selects -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-      <div class="space-y-2">
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="space-y-1.5">
         <label class="block text-primary text-[10px] font-bold uppercase tracking-widest ml-1 opacity-60" data-i18n="label_video">影像來源</label>
-        <select id="vid-sel" class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:border-primary text-on-surface cursor-pointer outline-none appearance-none"></select>
+        <select id="vid-sel" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:border-primary text-on-surface cursor-pointer outline-none appearance-none text-sm"></select>
       </div>
-      <div class="space-y-2">
+      <div class="space-y-1.5">
         <label class="block text-primary text-[10px] font-bold uppercase tracking-widest ml-1 opacity-60" data-i18n="label_audio">音訊來源</label>
-        <select id="aud-sel" class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:border-primary text-on-surface cursor-pointer outline-none appearance-none"></select>
+        <select id="aud-sel" class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:border-primary text-on-surface cursor-pointer outline-none appearance-none text-sm"></select>
       </div>
     </div>
 
-    <button id="main-start-btn" onclick="handleStart()" class="w-full bg-primary text-black font-headline font-bold text-xl py-6 rounded-2xl flex items-center justify-center gap-4 hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/20">
-      <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
+    <button id="main-start-btn" onclick="handleStart()" class="w-full bg-primary text-black font-headline font-bold text-lg py-5 rounded-2xl flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/20">
+      <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1;">play_arrow</span>
       <span data-i18n="btn_start">授權並開始擷取</span>
     </button>
-    <p id="ph-log" class="mt-6 text-[10px] text-primary uppercase tracking-widest opacity-40 italic text-center" data-i18n="status_ready">READY TO INITIALIZE</p>
+    <p id="ph-log" class="mt-4 text-[10px] text-primary uppercase tracking-widest opacity-40 italic text-center" data-i18n="status_ready">READY TO INITIALIZE</p>
   </div>
 </div>
 
@@ -301,12 +287,7 @@ tailwind.config = {
 const LANGS = {
   zh: {
     subtitle:'Elite Capture System',
-    perm_title:'開始前請確認瀏覽器權限',
-    perm_cam_title:'📷 攝影機（Camera）權限',
-    perm_cam_desc:'瀏覽器會跳出授權視窗，請選擇「允許」。若使用擷取卡，請在下方選單選擇對應的影像裝置。',
-    perm_mic_title:'🎙️ 麥克風（Microphone）權限',
-    perm_mic_desc:'同樣需要授權，才能擷取 Switch 的遊戲聲音。請選擇對應的音訊輸入裝置（通常是 HDMI / USB 擷取卡）。',
-    perm_note:'⚠️ 若看不到裝置清單或清單是空的，請先插好擷取卡再重新整理頁面。所有媒體資料僅在本機處理，不會上傳至任何伺服器。',
+    perm_hint:'點擊下方按鈕後，請在瀏覽器彈窗中允許攝影機與麥克風的存取權限。',
     label_video:'影像來源', label_audio:'音訊來源',
     btn_start:'授權並開始擷取',
     status_ready:'READY TO INITIALIZE',
@@ -328,12 +309,7 @@ const LANGS = {
   },
   en: {
     subtitle:'Elite Capture System',
-    perm_title:'Grant Browser Permissions First',
-    perm_cam_title:'📷 Camera Permission',
-    perm_cam_desc:'A browser dialog will appear — click "Allow". If using a capture card, select the correct video device from the dropdown below.',
-    perm_mic_title:'🎙️ Microphone Permission',
-    perm_mic_desc:'Required to capture Switch game audio. Select your HDMI / USB capture card as the audio input device.',
-    perm_note:'⚠️ If the device list is empty, connect your capture card and refresh the page. All media is processed locally — nothing is uploaded.',
+    perm_hint:'Click the button below, then allow Camera and Microphone access when the browser prompt appears.',
     label_video:'Video Source', label_audio:'Audio Source',
     btn_start:'Authorize & Start Capture',
     status_ready:'READY TO INITIALIZE',
@@ -355,12 +331,7 @@ const LANGS = {
   },
   ja: {
     subtitle:'エリートキャプチャーシステム',
-    perm_title:'開始前にブラウザの権限を確認してください',
-    perm_cam_title:'📷 カメラの権限',
-    perm_cam_desc:'ブラウザの許可ダイアログで「許可」を選択してください。キャプチャーカードを使用する場合は、下のメニューから対応するデバイスを選択してください。',
-    perm_mic_title:'🎙️ マイクの権限',
-    perm_mic_desc:'Switchのゲーム音声を取得するために必要です。HDMIまたはUSBキャプチャーカードを音声入力として選択してください。',
-    perm_note:'⚠️ デバイスリストが空の場合はキャプチャーカードを接続してページを再読み込みしてください。すべてのメディアはローカルで処理されます。',
+    perm_hint:'下のボタンをクリックすると、ブラウザがカメラとマイクの許可を求めます。「許可」を選択してください。',
     label_video:'映像ソース', label_audio:'音声ソース',
     btn_start:'権限を許可して開始',
     status_ready:'初期化準備完了',
@@ -387,9 +358,13 @@ let currentLang = 'zh';
 function setLang(lang) {
   currentLang = lang;
   const dict = LANGS[lang];
+  const HTML_KEYS = new Set(['perm_hint']);
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if (dict[key] !== undefined) el.textContent = dict[key];
+    if (dict[key] !== undefined) {
+      if (HTML_KEYS.has(key)) el.innerHTML = dict[key];
+      else el.textContent = dict[key];
+    }
   });
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active',
